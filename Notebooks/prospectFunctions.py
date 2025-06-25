@@ -1,0 +1,175 @@
+import numpy as np
+
+##################################################################################################################################################
+
+def getObs(snr=10.0, ldist=10.0, **extras):
+    """Build a dictionary of observational data. The data should 
+    consist of photometry for a single galaxy.
+
+    :param snr:
+        The S/N to assign to the photometry.
+
+    :param ldist:
+        The luminosity distance to assume for translating absolute 
+        magnitudes into apparent magnitudes.
+
+    :returns obs:
+        A dictionary of observational data to use in the fit.
+    """
+    from prospect.utils.obsutils import fix_obs
+    import sedpy
+
+    obs = {}
+
+    filternames = ['jwst_f090w', 'jwst_f115w', 'jwst_f150w', 'jwst_f200w', 'jwst_f277w',
+                   'jwst_f356w', 'jwst_f410m', 'jwst_f444w', 'jwst_f770w', 'jwst_f1800w']
+    obs['filters'] = sedpy.observate.load_filters(filternames)
+
+    ################################################# FIX THE UNITS OF THIS DATA
+    M_AB = np.array([0.0148, 0.028, 0.0269, 0.322, 1.090, 1.334, 1.597, 1.725, 1.54, 1.96]) # These are currently in units of microJanskeys (fix)
+    ################################################# FIX THE UNITS OF THIS DATA
+
+    obs['maggies'] = 10**(-0.4*M_AB)
+    obs['maggies_unc'] = (1./snr) * obs['maggies']
+
+    obs['phot_wave'] = np.array([f.wave_effective for f in obs['filters']])
+
+    obs['wavelength'] = None
+    obs['spectrum'] = None
+    obs['unc'] = None
+    obs['mask'] = None
+
+    obs = fix_obs(obs)
+
+    return obs
+
+##################################################################################################################################################
+
+def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, ldist=10.0, **extras):
+    """Build a prospect.models.SedModel object
+
+    :param mass: (optional, default:None)
+        If given, produce spectra for this mass. Otherwise the mass will
+        be 1e8 solar masses.
+
+    :param zred: (optional, default: None)
+        If given, produce spectra and observed frame photometry appropriate
+        for this redshift. Otherwise the redshift will be zero.
+
+    :param logzsol: (optional, default: None)
+        If given, fix the model metallicity (:math: `log(Z/Z_sun)`) to the given value.
+        Otherwise the metallicity will be set to -0.5.
+        
+    :param tage: (optional, default: None)
+        If given, produce spectra and model photometry appropriate for
+        this galactic age. Otherwise the age will be set to 13. Gyrs.
+
+    :param dust2: (optional, default: None)
+        If given, produce spectra that are appropriate for provided dust
+        attenuation. Otherwise attenuation will be set to 0.6.
+
+    :param ldist: (optional, default: 10)
+        The luminosity distance (in Mpc) for the model. Spectra and observed
+        frame (apparent) photometry will be appropriate for this luminosity distance.
+
+    :returns model:
+        An instance of prospect.models.SedModel
+    """
+    from prospect.models.sedmodel import SedModel
+    from prospect.models.templates import TemplateLibrary
+
+    model_params = TemplateLibrary['parametric_sfh']
+
+    model_params['lumdist'] = {'N':1, 'isfree':False, 'init':ldist, 'units':'Mpc'}
+
+    # Change `isfree` so that all parameters that will be kept track of are identified 
+    # in the `model` object as `free_params`
+    model_params['zred']['isfree'] = True
+    model_params['tau']['isfree'] = False
+
+    if zred is None:
+        model_params['zred']['init'] = 0.0
+    else:
+        model_params['zred']['init'] = zred
+
+    if mass is not None:
+        model_params['mass']['init'] = mass
+
+    if logzsol is not None:
+        model_params['logzsol']['init'] = logzsol
+
+    if tage is None:
+        model_params['tage']['init'] = 13.
+    else:
+        model_params['tage']['init'] = tage
+
+    if dust2 is not None:
+        model_params['dust2']['init'] = dust2
+
+    model = SedModel(model_params)
+
+    return model
+
+##################################################################################################################################################
+
+def getSps(zcontinuous=1, **extras):
+    """
+    :param zcontinuous:
+        A value of 1 ensures that we use interpolation between SSPs to
+        have a continuous metallicity parameter (`logzsol`)
+        See python-FSPS documentation for details
+    """
+    from prospect.sources import CSPSpecBasis
+    sps = CSPSpecBasis(zcontinuous=zcontinuous)
+    return sps
+
+##################################################################################################################################################
+
+def getTheta(model_obj, obs_obj, sps_obj):
+    theta = model_obj.theta.copy()
+    init_spec, init_phot, init_mfrac = model_obj.sed(theta, obs=obs_obj, sps=sps_obj)
+    return init_spec, init_phot, init_mfrac
+
+##################################################################################################################################################
+
+def getWave(obs=None, sps=None, zred=0.0, **extras):
+
+    wphot = obs['phot_wave']
+
+    a = 1.0 + zred
+
+    wspec = sps.wavelengths
+    wspec *= a
+
+    return wspec, wphot
+
+##################################################################################################################################################
+
+def plotBalmerBreak(zred=None, **extras):
+
+    a = 1.0 + zred
+    
+    balmer = np.ones(2)*3646*a
+    
+    y = np.linspace(0,1e5,2)
+    
+    lower_1 = np.ones(2)*3620*a
+    upper_1 = np.ones(2)*3720*a
+    
+    lower_2 = np.ones(2)*4000*a
+    upper_2 = np.ones(2)*4100*a
+
+    alpha = 0.6
+    lw = .7
+    ls = '--'
+    
+    plot(balmer,y,color='black',alpha=alpha+.2)
+    
+    plot(lower_1,y,color='red',ls=ls,lw=lw,alpha=alpha)
+    plot(upper_1,y,color='red',ls=ls,lw=lw,alpha=alpha)
+    
+    plot(lower_2,y,color='blue',ls=ls,lw=lw,alpha=alpha)
+    plot(upper_2,y,color='blue',ls=ls,lw=lw,alpha=alpha)
+
+##################################################################################################################################################
+
