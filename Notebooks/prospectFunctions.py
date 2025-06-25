@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib.pyplot import *
 
 ##################################################################################################################################################
 
@@ -172,4 +173,17 @@ def plotBalmerBreak(zred=None, **extras):
     plot(upper_2,y,color='blue',ls=ls,lw=lw,alpha=alpha)
 
 ##################################################################################################################################################
+
+def getBalmerStrength(spec):
+    """Compute the balmer strength of a spectra as calculated in De Graaff et. al. 2025.
+    :param spec:
+        The spectra of an object outputted after using the model.sed() function on 
+        a prospect.models.sedmodel.SedModel() (model) object. The average is calculated
+        between the ranges of 3620-3720 and 4000-4100 Angstroms.
+    :returns balmer_strength:
+    """
+    return spec[111:113].mean() - spec[119:121].mean()
+
+##################################################################################################################################################
+
 
