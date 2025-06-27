@@ -45,8 +45,7 @@ def get_lr(line1, e_line1, line2, e_line2):
     e_lr = abs(llr) / np.log(10) * np.sqrt((e_line1 / line1) ** 2 + (e_line2 / line2) ** 2)
     return llr, e_lr
 
-# fit logU - sSFR relation from https://ui.adsabs.harvard.edu/abs/2018MNRAS.477.5568K/abstract
-logu_csv = pd.read_csv('/usr/data/oso2/zlewis/rubies/sel_func/logu_ssfr.csv', names=['ssfr', 'logu'])
+# fit logU - sSFR relation from https://ui.adsabs.harvard.edu/abs/2018MN/lread_csv('/usr/data/oso2/zlewis/rubies/sel_func/logu_ssfr.csv', names=['ssfr', 'logu'])
 m_logu, b_logu = np.polyfit(logu_csv.ssfr, logu_csv.logu, deg=1)
 
 def get_logu(sSFR):
