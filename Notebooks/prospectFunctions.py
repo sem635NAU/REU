@@ -214,7 +214,7 @@ def plotBalmerBreakD4000(zred=None, **extras):
 #     return spec[111:113].mean() - spec[119:121].mean()
 
 ##################################################################################################################################################
-def getBreakBounds(wspec, zred=None, **extras):
+def getBreakBoundsAnna(wspec, zred=None, **extras):
 
     a = 1.0 + zred
 
@@ -278,4 +278,35 @@ def getBreakBoundsD4000(wspec, zred=None, **extras):
 
 ##################################################################################################################################################
 
+def getBreakBounds(wspec, start, zred=None, **extras):
 
+    a = 1.0 + zred
+
+    for i,s in enumerate(wspec>start*a):
+        if s:
+            # print(s, i, wspec[i], wspec[i]/a)
+            blue_lower = i
+            break
+    
+    for i,s in enumerate(wspec<(start+100)*a):
+        if not s:
+            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
+            blue_upper = i-1
+            break
+    
+    for i,s in enumerate(wspec>4000*a):
+        if s:
+            # print(s, i, wspec[i], wspec[i]/a)
+            red_lower = i
+            break
+    
+    for i,s in enumerate(wspec<4100*a):
+        if not s:
+            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
+            red_upper = i-1
+            break
+
+    return {'blue':[blue_lower, blue_upper], 'red':[red_lower, red_upper]}
+
+##################################################################################################################################################
+    
