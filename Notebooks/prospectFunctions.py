@@ -202,6 +202,38 @@ def plotBalmerBreakD4000(zred=None, **extras):
 
 ##################################################################################################################################################
 
+def plotBalmerBreakRestFrame(zred=None, **extras):
+
+    # a = 1.0 + zred
+    
+    balmer = np.ones(2)*3646
+    
+    y = np.linspace(0,1e10,2)
+    
+    lower_1 = np.ones(2)*3620
+    upper_1 = np.ones(2)*3720
+
+    lower_2 = np.ones(2)*3850
+    upper_2 = np.ones(2)*3950
+    
+    lower_3 = np.ones(2)*4000
+    upper_3 = np.ones(2)*4100
+
+    alpha = 0.6
+    lw = 1
+    ls = '--'
+    
+    plot(lower_1,y,color='purple',ls=ls,lw=lw,alpha=alpha)
+    plot(upper_1,y,color='purple',ls=ls,lw=lw,alpha=alpha)
+    
+    plot(lower_2,y,color='blue',ls=ls,lw=lw,alpha=alpha)
+    plot(upper_2,y,color='blue',ls=ls,lw=lw,alpha=alpha)
+
+    plot(lower_3,y,color='red',ls=ls,lw=lw,alpha=alpha)
+    plot(upper_3,y,color='red',ls=ls,lw=lw,alpha=alpha)
+
+##################################################################################################################################################
+
     
 # def getBalmerStrength(spec):
 #     """Compute the balmer strength of a spectra as calculated in De Graaff et. al. 2025.
@@ -310,3 +342,18 @@ def getBreakBounds(wspec, start, zred=None, **extras):
 
 ##################################################################################################################################################
     
+def getParams():
+    grid_ranges = {}
+    grid_ranges['logzsol'] = np.linspace(-1,.5,10)
+    grid_ranges['dust2'] = np.linspace(0,3,10)
+    grid_ranges['tage'] = np.linspace(7,9,10)
+    
+    run_params = {}
+    run_params['zred'] = 3.548
+    run_params['mass'] = 1e8
+    run_params['add_duste'] = False
+    run_params['zcontinuous'] = 1
+    return grid_ranges, run_params
+    
+##################################################################################################################################################
+
