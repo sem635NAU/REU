@@ -46,12 +46,77 @@ def getObs(snr=10.0, ldist=10.0, **extras):
 
 ##################################################################################################################################################
 
-def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, ldist=10.0, **extras):
-    """Build a prospect.models.SedModel object
+# def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, ldist=10.0, **extras):
+#     """Build a prospect.models.SedModel object
+
+#     :param mass: (optional, default:None)
+#         If given, produce spectra for this mass. Otherwise the mass will
+#         be 1e8 solar masses.
+
+#     :param zred: (optional, default: None)
+#         If given, produce spectra and observed frame photometry appropriate
+#         for this redshift. Otherwise the redshift will be zero.
+
+#     :param logzsol: (optional, default: None)
+#         If given, fix the model metallicity (:math: `log(Z/Z_sun)`) to the given value.
+#         Otherwise the metallicity will be set to -0.5.
+        
+#     :param tage: (optional, default: None)
+#         If given, produce spectra and model photometry appropriate for
+#         this galactic age. Otherwise the age will be set to 13. Gyrs.
+
+#     :param dust2: (optional, default: None)
+#         If given, produce spectra that are appropriate for provided dust
+#         attenuation. Otherwise attenuation will be set to 0.6.
+
+#     :param ldist: (optional, default: 10)
+#         The luminosity distance (in Mpc) for the model. Spectra and observed
+#         frame (apparent) photometry will be appropriate for this luminosity distance.
+
+#     :returns model:
+#         An instance of prospect.models.SedModel
+#     """
+#     from prospect.models.sedmodel import SedModel
+#     from prospect.models.templates import TemplateLibrary
+
+#     model_params = TemplateLibrary['parametric_sfh']
+
+#     model_params['lumdist'] = {'N':1, 'isfree':False, 'init':ldist, 'units':'Mpc'}
+
+#     # Change `isfree` so that all parameters that will be kept track of are identified 
+#     # in the `model` object as `free_params`
+#     model_params['zred']['isfree'] = True
+#     model_params['tau']['isfree'] = False
+
+#     if zred is None:
+#         model_params['zred']['init'] = 0.0
+#     else:
+#         model_params['zred']['init'] = zred
+
+#     if mass is not None:
+#         model_params['mass']['init'] = mass
+
+#     if logzsol is not None:
+#         model_params['logzsol']['init'] = logzsol
+
+#     if tage is None:
+#         model_params['tage']['init'] = 13.
+#     else:
+#         model_params['tage']['init'] = tage
+
+#     if dust2 is not None:
+#         model_params['dust2']['init'] = dust2
+
+#     model = SedModel(model_params)
+
+#     return model
+
+def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, **extras):
+    """Build a prospect.models.SpecModel object
 
     :param mass: (optional, default:None)
         If given, produce spectra for this mass. Otherwise the mass will
-        be 1e8 solar masses.
+        be 1e10 solar masses.
 
     :param zred: (optional, default: None)
         If given, produce spectra and observed frame photometry appropriate
@@ -69,24 +134,17 @@ def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, ldist=10
         If given, produce spectra that are appropriate for provided dust
         attenuation. Otherwise attenuation will be set to 0.6.
 
-    :param ldist: (optional, default: 10)
-        The luminosity distance (in Mpc) for the model. Spectra and observed
-        frame (apparent) photometry will be appropriate for this luminosity distance.
-
     :returns model:
         An instance of prospect.models.SedModel
     """
-    from prospect.models.sedmodel import SedModel
+    from prospect.models import SpecModel
     from prospect.models.templates import TemplateLibrary
 
-    model_params = TemplateLibrary['parametric_sfh']
-
-    model_params['lumdist'] = {'N':1, 'isfree':False, 'init':ldist, 'units':'Mpc'}
+    model_params = TemplateLibrary['ssp']
 
     # Change `isfree` so that all parameters that will be kept track of are identified 
     # in the `model` object as `free_params`
     model_params['zred']['isfree'] = True
-    model_params['tau']['isfree'] = False
 
     if zred is None:
         model_params['zred']['init'] = 0.0
@@ -107,7 +165,7 @@ def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, ldist=10
     if dust2 is not None:
         model_params['dust2']['init'] = dust2
 
-    model = SedModel(model_params)
+    model = SpecModel(model_params)
 
     return model
 
@@ -311,33 +369,32 @@ def getBreakBoundsD4000(wspec, zred=None, **extras):
 ##################################################################################################################################################
 
 def getBreakBounds(wspec, start, zred=None, **extras):
-
     a = 1.0 + zred
 
     for i,s in enumerate(wspec>start*a):
         if s:
-            # print(s, i, wspec[i], wspec[i]/a)
+            # print(i, wspec[i]/a)
             blue_lower = i
             break
     
     for i,s in enumerate(wspec<(start+100)*a):
         if not s:
-            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
-            blue_upper = i-1
+            # print(i-1, wspec[i-1]/a)
+            blue_upper = i
             break
     
     for i,s in enumerate(wspec>4000*a):
         if s:
-            # print(s, i, wspec[i], wspec[i]/a)
+            # print(i, wspec[i]/a)
             red_lower = i
             break
     
     for i,s in enumerate(wspec<4100*a):
         if not s:
-            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
-            red_upper = i-1
+            # print(i-1, wspec[i-1]/a)
+            red_upper = i
             break
-
+            
     return {'blue':[blue_lower, blue_upper], 'red':[red_lower, red_upper]}
 
 ##################################################################################################################################################
@@ -345,8 +402,8 @@ def getBreakBounds(wspec, start, zred=None, **extras):
 def getParams():
     grid_ranges = {}
     grid_ranges['logzsol'] = np.linspace(-1,.5,10)
-    grid_ranges['dust2'] = np.linspace(0,3,10)
-    grid_ranges['tage'] = np.linspace(7,9,10)
+    grid_ranges['dust2'] = np.zeros(1)
+    grid_ranges['tage'] = np.logspace(-2,1,10)
     
     run_params = {}
     run_params['zred'] = 3.548
