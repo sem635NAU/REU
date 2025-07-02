@@ -185,8 +185,8 @@ def getSps(zcontinuous=1, **extras):
 ##################################################################################################################################################
 
 def getTheta(model_obj, obs_obj, sps_obj):
-    theta = model_obj.theta.copy()
-    init_spec, init_phot, init_mfrac = model_obj.sed(theta, obs=obs_obj, sps=sps_obj)
+    # theta = model_obj.theta.copy()
+    init_spec, init_phot, init_mfrac = model_obj.predict(model_obj.theta, obs=obs_obj, sps=sps_obj)
     return init_spec, init_phot, init_mfrac
 
 ##################################################################################################################################################
@@ -204,59 +204,59 @@ def getWave(obs=None, sps=None, zred=0.0, **extras):
 
 ##################################################################################################################################################
 
-def plotBalmerBreak(zred=None, **extras):
+# def plotBalmerBreak(zred=None, **extras):
 
-    a = 1.0 + zred
+#     a = 1.0 + zred
     
-    balmer = np.ones(2)*3646*a
+#     balmer = np.ones(2)*3646*a
     
-    y = np.linspace(0,1e10,2)
+#     y = np.linspace(0,1e10,2)
     
-    lower_1 = np.ones(2)*3620*a
-    upper_1 = np.ones(2)*3720*a
+#     lower_1 = np.ones(2)*3620*a
+#     upper_1 = np.ones(2)*3720*a
     
-    lower_2 = np.ones(2)*4000*a
-    upper_2 = np.ones(2)*4100*a
+#     lower_2 = np.ones(2)*4000*a
+#     upper_2 = np.ones(2)*4100*a
 
-    alpha = 0.6
-    lw = .7
-    ls = '--'
+#     alpha = 0.6
+#     lw = .7
+#     ls = '--'
     
-    # plot(balmer,y,color='black',alpha=alpha+.2)
+#     # plot(balmer,y,color='black',alpha=alpha+.2)
     
-    plot(lower_1,y,color='purple',ls=ls,lw=lw,alpha=alpha)
-    plot(upper_1,y,color='purple',ls=ls,lw=lw,alpha=alpha)
+#     plot(lower_1,y,color='purple',ls=ls,lw=lw,alpha=alpha)
+#     plot(upper_1,y,color='purple',ls=ls,lw=lw,alpha=alpha)
     
-    plot(lower_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
-    plot(upper_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
+#     plot(lower_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
+#     plot(upper_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
 
 ##################################################################################################################################################
 
-def plotBalmerBreakD4000(zred=None, **extras):
+# def plotBalmerBreakD4000(zred=None, **extras):
 
-    a = 1.0 + zred
+#     a = 1.0 + zred
     
-    balmer = np.ones(2)*3646*a
+#     balmer = np.ones(2)*3646*a
     
-    y = np.linspace(0,1e10,2)
+#     y = np.linspace(0,1e10,2)
     
-    lower_1 = np.ones(2)*3850*a
-    upper_1 = np.ones(2)*3950*a
+#     lower_1 = np.ones(2)*3850*a
+#     upper_1 = np.ones(2)*3950*a
     
-    lower_2 = np.ones(2)*4000*a
-    upper_2 = np.ones(2)*4100*a
+#     lower_2 = np.ones(2)*4000*a
+#     upper_2 = np.ones(2)*4100*a
 
-    alpha = 0.6
-    lw = .7
-    ls = '--'
+#     alpha = 0.6
+#     lw = .7
+#     ls = '--'
     
-    # plot(balmer,y,color='black',alpha=alpha+.2)
+#     # plot(balmer,y,color='black',alpha=alpha+.2)
     
-    plot(lower_1,y,color='blue',ls=ls,lw=lw,alpha=alpha)
-    plot(upper_1,y,color='blue',ls=ls,lw=lw,alpha=alpha)
+#     plot(lower_1,y,color='blue',ls=ls,lw=lw,alpha=alpha)
+#     plot(upper_1,y,color='blue',ls=ls,lw=lw,alpha=alpha)
     
-    plot(lower_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
-    plot(upper_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
+#     plot(lower_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
+#     plot(upper_2,y,color='red',ls=ls,lw=lw,alpha=alpha)
 
 ##################################################################################################################################################
 
@@ -292,7 +292,6 @@ def plotBalmerBreakRestFrame(zred=None, **extras):
 
 ##################################################################################################################################################
 
-    
 # def getBalmerStrength(spec):
 #     """Compute the balmer strength of a spectra as calculated in De Graaff et. al. 2025.
 #     :param spec:
@@ -303,68 +302,69 @@ def plotBalmerBreakRestFrame(zred=None, **extras):
 #     """
 #     return spec[111:113].mean() - spec[119:121].mean()
 
-##################################################################################################################################################
-def getBreakBoundsAnna(wspec, zred=None, **extras):
+# ##################################################################################################################################################
 
-    a = 1.0 + zred
+# def getBreakBoundsAnna(wspec, zred=None, **extras):
 
-    for i,s in enumerate(wspec>3620*a):
-        if s:
-            # print(s, i, wspec[i], wspec[i]/a)
-            blue_lower = i
-            break
+#     a = 1.0 + zred
+
+#     for i,s in enumerate(wspec>3620*a):
+#         if s:
+#             # print(s, i, wspec[i], wspec[i]/a)
+#             blue_lower = i
+#             break
     
-    for i,s in enumerate(wspec<3720*a):
-        if not s:
-            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
-            blue_upper = i-1
-            break
+#     for i,s in enumerate(wspec<3720*a):
+#         if not s:
+#             # print(s, i-1, wspec[i-1], wspec[i-1]/a)
+#             blue_upper = i-1
+#             break
     
-    for i,s in enumerate(wspec>4000*a):
-        if s:
-            # print(s, i, wspec[i], wspec[i]/a)
-            red_lower = i
-            break
+#     for i,s in enumerate(wspec>4000*a):
+#         if s:
+#             # print(s, i, wspec[i], wspec[i]/a)
+#             red_lower = i
+#             break
     
-    for i,s in enumerate(wspec<4100*a):
-        if not s:
-            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
-            red_upper = i-1
-            break
+#     for i,s in enumerate(wspec<4100*a):
+#         if not s:
+#             # print(s, i-1, wspec[i-1], wspec[i-1]/a)
+#             red_upper = i-1
+#             break
 
-    return {'blue':[blue_lower, blue_upper], 'red':[red_lower, red_upper]}
+#     return {'blue':[blue_lower, blue_upper], 'red':[red_lower, red_upper]}
 
-##################################################################################################################################################
+# ##################################################################################################################################################
 
-def getBreakBoundsD4000(wspec, zred=None, **extras):
+# def getBreakBoundsD4000(wspec, zred=None, **extras):
 
-    a = 1.0 + zred
+#     a = 1.0 + zred
 
-    for i,s in enumerate(wspec>3850*a):
-        if s:
-            # print(s, i, wspec[i], wspec[i]/a)
-            blue_lower = i
-            break
+#     for i,s in enumerate(wspec>3850*a):
+#         if s:
+#             # print(s, i, wspec[i], wspec[i]/a)
+#             blue_lower = i
+#             break
     
-    for i,s in enumerate(wspec<3950*a):
-        if not s:
-            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
-            blue_upper = i-1
-            break
+#     for i,s in enumerate(wspec<3950*a):
+#         if not s:
+#             # print(s, i-1, wspec[i-1], wspec[i-1]/a)
+#             blue_upper = i-1
+#             break
     
-    for i,s in enumerate(wspec>4000*a):
-        if s:
-            # print(s, i, wspec[i], wspec[i]/a)
-            red_lower = i
-            break
+#     for i,s in enumerate(wspec>4000*a):
+#         if s:
+#             # print(s, i, wspec[i], wspec[i]/a)
+#             red_lower = i
+#             break
     
-    for i,s in enumerate(wspec<4100*a):
-        if not s:
-            # print(s, i-1, wspec[i-1], wspec[i-1]/a)
-            red_upper = i-1
-            break
+#     for i,s in enumerate(wspec<4100*a):
+#         if not s:
+#             # print(s, i-1, wspec[i-1], wspec[i-1]/a)
+#             red_upper = i-1
+#             break
 
-    return {'blue':[blue_lower, blue_upper], 'red':[red_lower, red_upper]}
+#     return {'blue':[blue_lower, blue_upper], 'red':[red_lower, red_upper]}
 
 ##################################################################################################################################################
 
@@ -399,11 +399,14 @@ def getBreakBounds(wspec, start, zred=None, **extras):
 
 ##################################################################################################################################################
     
-def getParams():
+def getParams(len_logz,len_dust,len_tage, dust=False):
     grid_ranges = {}
-    grid_ranges['logzsol'] = np.linspace(-1,.5,10)
-    grid_ranges['dust2'] = np.zeros(1)
-    grid_ranges['tage'] = np.logspace(-2,1,10)
+    grid_ranges['logzsol'] = np.linspace(-1,.5,len_logz)
+    if dust==True:  
+        grid_ranges['dust2'] = np.linspace(0,3,len_dust)
+    else:
+        grid_ranges['dust2'] = np.zeros(1)
+    grid_ranges['tage'] = np.logspace(-1,np.log10(2),len_tage)
     
     run_params = {}
     run_params['zred'] = 3.548
