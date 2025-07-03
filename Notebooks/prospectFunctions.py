@@ -111,7 +111,7 @@ def getObs(snr=10.0, ldist=10.0, **extras):
 
 #     return model
 
-def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, **extras):
+def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, imf_type=2, **extras):
     """Build a prospect.models.SpecModel object
 
     :param mass: (optional, default:None)
@@ -165,6 +165,8 @@ def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, **extras
     if dust2 is not None:
         model_params['dust2']['init'] = dust2
 
+    model_params['imf_type']['init'] = imf_type
+
     model = SpecModel(model_params)
 
     return model
@@ -178,6 +180,9 @@ def getSps(zcontinuous=1, **extras):
         have a continuous metallicity parameter (`logzsol`)
         See python-FSPS documentation for details
     """
+
+    # imf_upper_limit = 300
+    # then imf_type = 0 (power law) (go through each of first 5 imf_type
     from prospect.sources import CSPSpecBasis
     sps = CSPSpecBasis(zcontinuous=zcontinuous)
     return sps
@@ -399,16 +404,17 @@ def getBreakBounds(wspec, start, zred=None, **extras):
 
 ##################################################################################################################################################
     
-def getParams(len_logz,len_dust,len_tage, dust=False):
+def getParams(imf_type, len_logz,len_dust,len_tage, dust=False):
     grid_ranges = {}
     grid_ranges['logzsol'] = np.linspace(-1,.5,len_logz)
     if dust==True:  
-        grid_ranges['dust2'] = np.linspace(0,3,len_dust)
+        grid_ranges['dust2'] = np.linspace(0,5,len_dust)
     else:
         grid_ranges['dust2'] = np.zeros(1)
     grid_ranges['tage'] = np.logspace(-1,np.log10(2),len_tage)
     
     run_params = {}
+    run_params['imf_type'] = imf_type
     run_params['zred'] = 3.548
     run_params['mass'] = 1e8
     run_params['add_duste'] = False
