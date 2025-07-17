@@ -79,7 +79,7 @@ import numpy as np
 
 ##################################################################################################################################################
 
-def model_function(add_burst=False, add_trunc=False, **extras):
+def getModel(add_burst=False, add_trunc=False, **extras):
 
     from prospect.models import SpecModel
     from prospect.models.templates import TemplateLibrary
