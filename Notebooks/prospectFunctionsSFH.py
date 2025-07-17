@@ -79,7 +79,7 @@ import numpy as np
 
 ##################################################################################################################################################
 
-    def model_function(add_burst=False, trunc=False, **extras):
+def model_function(add_burst=False, add_trunc=False, **extras):
 
     from prospect.models import SpecModel
     from prospect.models.templates import TemplateLibrary
@@ -89,7 +89,7 @@ import numpy as np
     if add_burst:
         model_params.update(TemplateLibrary['burst_sfh'])
         model_params['const'] = {'N': 1, 'isfree': False, 'init': 0.0, 'units': 'Solar Masses per year'}
-        if trunc:
+        if add_trunc:
             model_params['sf_start'] = {'N': 1, 'isfree': False, 'init': 0.0, 'units': 'Gyrs'}
             model_params['sf_trunc'] = {'N': 1, 'isfree': False, 'init': 0.0, 'units': 'Gyrs'}
 
