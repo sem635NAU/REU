@@ -3,82 +3,6 @@ import numpy as np
 
 ##################################################################################################################################################
 
-# def getModel(mass=None, zred=None, logzsol=None, tage=None, dust2=None, imf_type=None, 
-#              sfh_type=None, sf_start=None, sf_trunc=None, fburst=None, fage_burst=None, **extras):
-#     """Build a prospect.models.SpecModel object
-
-#     :param mass: (optional, default:None)
-#         If given, produce spectra for this mass. Otherwise the mass will
-#         be 1e10 solar masses.
-
-#     :param zred: (optional, default: None)
-#         If given, produce spectra and observed frame photometry appropriate
-#         for this redshift. Otherwise the redshift will be zero.
-
-#     :param logzsol: (optional, default: None)
-#         If given, fix the model metallicity (:math: `log(Z/Z_sun)`) to the given value.
-#         Otherwise the metallicity will be set to -0.5.
-        
-#     :param tage: (optional, default: None)
-#         If given, produce spectra and model photometry appropriate for
-#         this galactic age. Otherwise the age will be set to 13. Gyrs.
-
-#     :param dust2: (optional, default: None)
-#         If given, produce spectra that are appropriate for provided dust
-#         attenuation. Otherwise attenuation will be set to 0.6.
-
-#     :returns model:
-#         An instance of prospect.models.SedModel
-#     """
-#     from prospect.models import SpecModel
-#     from prospect.models.templates import TemplateLibrary
-
-#     model_params = TemplateLibrary['parametric_sfh']
-#     model_params.update(TemplateLibrary['burst_sfh'])
-
-#     # Change `isfree` so that all parameters that will be kept track of are identified 
-#     # in the `model` object as `free_params`
-#     # model_params['zred']['isfree'] = True
-
-#     if sf_start is not None:
-#         model_params['sf_start'] = {'N': 1, 'isfree': False, 'init': sf_start, 'units': 'Gyrs'}
-#     if sf_trunc is not None:
-#         model_params['sf_trunc'] = {'N': 1, 'isfree': False, 'init': sf_trunc, 'units': 'Gyrs'}
-
-#     if zred is not None:
-#         model_params['zred']['init'] = zred
-
-#     if mass is not None:
-#         model_params['mass']['init'] = mass
-
-#     if logzsol is not None:
-#         model_params['logzsol']['init'] = logzsol
-
-#     if tage is not None:
-#         model_params['tage']['init'] = tage
-
-#     if dust2 is not None:
-#         model_params['dust2']['init'] = dust2
-
-#     if imf_type is not None:
-#         model_params['imf_type']['init'] = imf_type
-
-#     if sfh_type is not None:
-#         model_params['sfh']['init'] = sfh_type
-
-#     if add_burst:
-#         model_params.update(TemplateLibrary['burst_sfh'])
-
-#     else:
-#         for key in extras.keys()
-    
-
-#     model = SpecModel(model_params)
-
-#     return model
-
-##################################################################################################################################################
-
 def getModel(add_burst=False, add_trunc=False, **extras):
 
     from prospect.models import SpecModel
@@ -93,7 +17,7 @@ def getModel(add_burst=False, add_trunc=False, **extras):
             model_params['sf_start'] = {'N': 1, 'isfree': False, 'init': 0.0, 'units': 'Gyrs'}
             model_params['sf_trunc'] = {'N': 1, 'isfree': False, 'init': 0.0, 'units': 'Gyrs'}
 
-    for key in list(extras.keys()):
+    for key in list(model_params.keys()):
         model_params[key]['init'] = extras[key]
 
     model = SpecModel(model_params)
@@ -160,52 +84,6 @@ def getSps(zcontinuous=1, **extras):
     return sps
     
 ##################################################################################################################################################
-
-
-
-
-
-
-
-
-
-##################################################################################################################################################
-
-
-
-
-
-
-
-
-
-##################################################################################################################################################
-
-
-
-
-
-
-
-
-
-##################################################################################################################################################
-
-
-
-
-
-
-
-
-
-##################################################################################################################################################
-
-
-
-
-
-
 
 
 
